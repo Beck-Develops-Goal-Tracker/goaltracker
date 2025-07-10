@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
 import { Goal } from '@/types'
@@ -16,13 +16,7 @@ export default function GoalsPage() {
   const { user, signOut } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    if (user) {
-      fetchGoals()
-    }
-  }, [user])
-
-  const fetchGoals = async () => {
+  const fetchGoals = useCallback(async () => {
     try {
       setLoading(true)
       const { data, error } = await supabase
@@ -36,12 +30,18 @@ export default function GoalsPage() {
       } else {
         setGoals(data || [])
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch goals')
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (user) {
+      fetchGoals()
+    }
+  }, [user, fetchGoals])
 
   const addGoal = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,7 +66,7 @@ export default function GoalsPage() {
         setGoals([...data, ...goals])
         setNewGoal('')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to add goal')
     } finally {
       setSubmitting(false)
@@ -88,7 +88,7 @@ export default function GoalsPage() {
           goal.id === id ? { ...goal, completed: !completed } : goal
         ))
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update goal')
     }
   }
@@ -106,7 +106,7 @@ export default function GoalsPage() {
       } else {
         setGoals(goals.filter(goal => goal.id !== id))
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete goal')
     }
   }

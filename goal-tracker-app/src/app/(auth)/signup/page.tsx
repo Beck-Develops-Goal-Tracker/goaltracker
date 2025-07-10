@@ -47,7 +47,7 @@ export default function SignupPage() {
           router.push('/login')
         }, 3000)
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -69,7 +69,7 @@ export default function SignupPage() {
                 Account Created!
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Your account has been created successfully. You'll be redirected to the login page.
+                Your account has been created successfully. You&apos;ll be redirected to the login page.
               </p>
               <Link
                 href="/login"
